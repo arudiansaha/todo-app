@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  padding-block: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: hsl(235, 24%, 19%);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: hsl(233, 11%, 84%);
+  }
+}

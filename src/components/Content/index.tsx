@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FormEvent, LegacyRef } from 'react';
 import type Todo from 'todo';
 import InputField from './InputField';
 import TodoField from './TodoField';
@@ -37,10 +37,18 @@ const todos: Todo[] = [
   },
 ];
 
-export default function Content() {
+interface Props {
+  formHandleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  contentRef: LegacyRef<HTMLDivElement>;
+}
+
+export default function Content({ formHandleSubmit, contentRef }: Props) {
   return (
-    <main className="flex flex-col gap-y-4 max-w-xl mx-auto px-8 font-sans text-lg text-grayishBlue-700 dark:text-grayishBlue-50">
-      <InputField />
+    <main
+      ref={contentRef}
+      className="flex flex-col gap-y-4 max-w-xl mx-auto px-8 font-sans text-lg"
+    >
+      <InputField formHandleSubmit={formHandleSubmit} />
       <TodoField data={todos} />
       <ButtonField />
     </main>

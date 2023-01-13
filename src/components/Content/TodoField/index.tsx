@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { LegacyRef } from 'react';
 import type Todo from 'todo';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 
 export default function TodoField({ data }: Props) {
   return (
-    <div className="grid rounded overflow-hidden divide-y divide-grayishBlue-200 dark:divide-grayishBlue-500 shadow-2xl">
+    <div className="grid rounded overflow-hidden divide-y divide-grayishBlue-200 dark:divide-grayishBlue-500 text-grayishBlue-700 dark:text-grayishBlue-50 shadow-2xl">
       {data.map(({ id, text }) => (
         <div
           key={id}
@@ -34,6 +34,17 @@ export default function TodoField({ data }: Props) {
       ))}
       <div className="flex justify-between items-center py-2 px-4 bg-grayishBlue-50 dark:bg-grayishBlue-700 text-grayishBlue-400">
         <div>{`${data.length} items left`}</div>
+        <div className="hidden md:flex justify-center items-center gap-x-2 py-2 px-4 font-bold">
+          <button className="text-grayishBlue-400" type="button">
+            All
+          </button>
+          <button className="text-grayishBlue-400" type="button">
+            Active
+          </button>
+          <button className="text-grayishBlue-400" type="button">
+            Completed
+          </button>
+        </div>
         <button type="button">Clear Compleated</button>
       </div>
     </div>

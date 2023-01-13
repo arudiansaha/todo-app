@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 
-export default function ToggleTheme() {
+interface Props {
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+}
+
+export default function ToggleSwitch({ onClick }: Props) {
   return (
-    <button type="button">
+    <button type="button" onClick={onClick}>
       <svg
         id="moonButton "
         className="hidden dark:block"
