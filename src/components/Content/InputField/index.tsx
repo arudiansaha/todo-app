@@ -1,11 +1,12 @@
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, { ChangeEvent, FormEvent, MouseEvent } from 'react';
 
 interface Props {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onClick: (event: MouseEvent<HTMLInputElement>) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
-export default function InputField({ onChange, onSubmit }: Props) {
+export default function InputField({ onChange, onSubmit, onClick }: Props) {
   return (
     <form
       className="flex items-center gap-x-2 py-2 px-4 rounded bg-grayishBlue-50 dark:bg-grayishBlue-700 text-grayishBlue-700 dark:text-grayishBlue-50 shadow-2xl"
@@ -13,7 +14,8 @@ export default function InputField({ onChange, onSubmit }: Props) {
     >
       <input
         type="checkbox"
-        className="form-checkbox h-5 w-5 p-3 rounded-full bg-grayishBlue-50 dark:bg-grayishBlue-700"
+        className="form-checkbox h-5 w-5 p-3 rounded-full"
+        onClick={onClick}
       />
       <input
         type="text"

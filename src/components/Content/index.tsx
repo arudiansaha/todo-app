@@ -5,7 +5,8 @@ import TodoField from './TodoField';
 import ButtonField from './ButtonField';
 
 interface Props {
-  inputHandleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  textHandleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  completedHandleClick: (event: MouseEvent<HTMLInputElement>) => void;
   formHandleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   contentRef: LegacyRef<HTMLDivElement>;
   todoData: Todo[];
@@ -13,7 +14,8 @@ interface Props {
 }
 
 export default function Content({
-  inputHandleChange,
+  textHandleChange,
+  completedHandleClick,
   formHandleSubmit,
   contentRef,
   todoData,
@@ -24,7 +26,11 @@ export default function Content({
       ref={contentRef}
       className="flex flex-col gap-y-4 max-w-xl mx-auto px-8 font-sans text-lg"
     >
-      <InputField onChange={inputHandleChange} onSubmit={formHandleSubmit} />
+      <InputField
+        onChange={textHandleChange}
+        onClick={completedHandleClick}
+        onSubmit={formHandleSubmit}
+      />
       <TodoField todoData={todoData} clearHandleClick={clearHandleClick} />
       <ButtonField />
     </main>

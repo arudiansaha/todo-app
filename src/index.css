@@ -6,6 +6,22 @@ body {
   padding-block: 1.5rem;
 }
 
+input[type="checkbox"] {
+  background-color: transparent;
+}
+
+input[type="checkbox"]:checked {
+  position: relative;
+  background-image: linear-gradient(hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+}
+
+input[type="checkbox"]:checked::before {
+  position: absolute;
+  top: 0;
+  left: 7px;
+  content: url('/src/assets/images/icon-check.svg');
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background-color: hsl(235, 24%, 19%);

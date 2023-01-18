@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, useRef } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -8,6 +8,7 @@ import {
 } from '@hello-pangea/dnd';
 import useLocalStorage from '@hooks/useLocalStorage';
 import type Todo from 'todo';
+import todoUtils from '@components/utils/todoUtils';
 
 interface Props {
   todoData: Todo[];
@@ -15,7 +16,8 @@ interface Props {
 }
 
 export default function TodoField({ todoData, clearHandleClick }: Props) {
-  const [todos, setTodos] = useLocalStorage('TODOS_KEY', todoData);
+  const [todos, setTodos] = useLocalStorage<Todo[]>('TODOS_KEY', todoData);
+  const completedRef = useRef<HTMLInputElement>(null);
 
   const handleOnDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -27,12 +29,13 @@ export default function TodoField({ todoData, clearHandleClick }: Props) {
     setTodos(items);
   };
 
-  const removeTodo = (id: string) => {
-    todos.splice(
-      todos.findIndex((todo) => todo.id === id),
-      1
-    );
+  const updateHandleClick = (id: string) => {
+    todoUtils.update(id, { array: todos, completedRef });
+    setTodos(todos);
+  };
 
+  const removeTodo = (id: string) => {
+    todoUtils.remove(id, todos);
     setTodos(todos);
     window.location.reload();
   };
@@ -47,7 +50,7 @@ export default function TodoField({ todoData, clearHandleClick }: Props) {
               {...droppableProvided.droppableProps}
               ref={droppableProvided.innerRef}
             >
-              {todos.map(({ id, text }, index) => {
+              {todos.map(({ id, text, isCompleted }, index) => {
                 return (
                   <Draggable key={id} draggableId={id} index={index}>
                     {(draggableProvided) => (
@@ -59,7 +62,10 @@ export default function TodoField({ todoData, clearHandleClick }: Props) {
                       >
                         <input
                           type="checkbox"
+                          ref={completedRef}
+                          defaultChecked={isCompleted}
                           className="form-input h-5 w-5 p-3 rounded-full bg-grayishBlue-50 dark:bg-grayishBlue-700"
+                          onChange={() => updateHandleClick(id)}
                         />
                         <span className="w-full py-3.5 px-4">{text} </span>
                         <button
