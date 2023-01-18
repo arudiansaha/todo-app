@@ -1,19 +1,21 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React, { MouseEvent } from 'react';
 import {
   DragDropContext,
   Draggable,
   Droppable,
   DropResult,
 } from '@hello-pangea/dnd';
+import useLocalStorage from '@hooks/useLocalStorage';
 import type Todo from 'todo';
 
 interface Props {
-  data: Todo[];
+  todoData: Todo[];
+  clearHandleClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export default function TodoField({ data }: Props) {
-  const [todos, setTodos] = useState(data);
+export default function TodoField({ todoData, clearHandleClick }: Props) {
+  const [todos, setTodos] = useLocalStorage('TODOS_KEY', todoData);
 
   const handleOnDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -23,6 +25,16 @@ export default function TodoField({ data }: Props) {
     items.splice(result.destination.index, 0, reorderedItem);
 
     setTodos(items);
+  };
+
+  const removeTodo = (id: string) => {
+    todos.splice(
+      todos.findIndex((todo) => todo.id === id),
+      1
+    );
+
+    setTodos(todos);
+    window.location.reload();
   };
 
   return (
@@ -53,6 +65,7 @@ export default function TodoField({ data }: Props) {
                         <button
                           type="button"
                           className="text-grayishBlue-700 dark:text-grayishBlue-50"
+                          onClick={() => removeTodo(id)}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +90,7 @@ export default function TodoField({ data }: Props) {
         </Droppable>
       </DragDropContext>
       <div className="flex justify-between items-center py-2 px-4 bg-grayishBlue-50 dark:bg-grayishBlue-700 text-grayishBlue-400">
-        <div>{`${data.length} items left`}</div>
+        <div>{`${todoData.length} items left`}</div>
         <div className="hidden md:flex justify-center items-center gap-x-2 py-2 px-4 font-bold">
           <button className="text-grayishBlue-400" type="button">
             All
@@ -89,7 +102,9 @@ export default function TodoField({ data }: Props) {
             Completed
           </button>
         </div>
-        <button type="button">Clear Compleated</button>
+        <button type="button" onClick={clearHandleClick}>
+          Clear Compleated
+        </button>
       </div>
     </div>
   );

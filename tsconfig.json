@@ -30,6 +30,9 @@
       "@interfaces/*": [
         "interfaces/*"
       ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
       "@utils/*": [
         "utils/*"
       ]

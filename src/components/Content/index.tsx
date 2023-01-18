@@ -1,55 +1,31 @@
-import React, { FormEvent, LegacyRef } from 'react';
+import React, { ChangeEvent, FormEvent, MouseEvent, LegacyRef } from 'react';
 import type Todo from 'todo';
 import InputField from './InputField';
 import TodoField from './TodoField';
 import ButtonField from './ButtonField';
 
-const todos: Todo[] = [
-  {
-    id: `todo-${crypto.randomUUID()}`,
-    isCompleted: false,
-    text: 'Adding Handler.',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: `todo-${crypto.randomUUID()}`,
-    isCompleted: false,
-    text: 'Adding storage.',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: `todo-${crypto.randomUUID()}`,
-    isCompleted: false,
-    text: 'Create hooks.',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: `todo-${crypto.randomUUID()}`,
-    isCompleted: false,
-    text: 'Make app Responsiveness.',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: `todo-${crypto.randomUUID()}`,
-    isCompleted: false,
-    text: 'Implement CRUD.',
-    createdAt: new Date().toISOString(),
-  },
-];
-
 interface Props {
+  inputHandleChange: (event: ChangeEvent<HTMLInputElement>) => void;
   formHandleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   contentRef: LegacyRef<HTMLDivElement>;
+  todoData: Todo[];
+  clearHandleClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export default function Content({ formHandleSubmit, contentRef }: Props) {
+export default function Content({
+  inputHandleChange,
+  formHandleSubmit,
+  contentRef,
+  todoData,
+  clearHandleClick,
+}: Props) {
   return (
     <main
       ref={contentRef}
       className="flex flex-col gap-y-4 max-w-xl mx-auto px-8 font-sans text-lg"
     >
-      <InputField formHandleSubmit={formHandleSubmit} />
-      <TodoField data={todos} />
+      <InputField onChange={inputHandleChange} onSubmit={formHandleSubmit} />
+      <TodoField todoData={todoData} clearHandleClick={clearHandleClick} />
       <ButtonField />
     </main>
   );
