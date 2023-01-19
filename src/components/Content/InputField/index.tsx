@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent, MouseEvent } from 'react';
+import clsx from 'clsx';
 
 interface Props {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -9,7 +10,10 @@ interface Props {
 export default function InputField({ onChange, onSubmit, onClick }: Props) {
   return (
     <form
-      className="flex items-center gap-x-2 py-2 px-4 rounded bg-grayishBlue-50 dark:bg-grayishBlue-700 text-grayishBlue-700 dark:text-grayishBlue-50 shadow-2xl"
+      className={clsx(
+        'flex items-center gap-x-2 py-2 px-4 rounded bg-grayishBlue-50 text-grayishBlue-700 shadow-2xl',
+        'dark:bg-grayishBlue-700 dark:text-grayishBlue-50'
+      )}
       onSubmit={onSubmit}
     >
       <input
@@ -19,7 +23,11 @@ export default function InputField({ onChange, onSubmit, onClick }: Props) {
       />
       <input
         type="text"
-        className="form-input w-full border-0 bg-grayishBlue-50 dark:bg-grayishBlue-700 placeholder:text-grayishBlue-400"
+        className={clsx(
+          'form-input w-full border-0 bg-grayishBlue-50',
+          'dark:bg-grayishBlue-700',
+          'placeholder:text-grayishBlue-400'
+        )}
         onChange={onChange}
         placeholder="Create a new todo..."
       />

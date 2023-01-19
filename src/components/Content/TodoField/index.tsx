@@ -1,78 +1,94 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { MouseEvent, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   DragDropContext,
   Draggable,
   Droppable,
   DropResult,
 } from '@hello-pangea/dnd';
+import clsx from 'clsx';
 import useLocalStorage from '@hooks/useLocalStorage';
 import type Todo from 'todo';
 import todoUtils from '@components/utils/todoUtils';
 
 interface Props {
   todoData: Todo[];
-  clearHandleClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export default function TodoField({ todoData, clearHandleClick }: Props) {
-  const [todos, setTodos] = useLocalStorage<Todo[]>('TODOS_KEY', todoData);
-  const [preview, setPreview] = useState<Todo[]>(todoData);
+export default function TodoField({ todoData }: Props) {
+  const [storageData, setStorageData] = useLocalStorage<Todo[]>(
+    'TODOS_KEY',
+    todoData
+  );
+  const [localData, setLocalData] = useState<Todo[]>(storageData);
   const [active, setActive] = useState<string>('1');
-  const completedRef = useRef<HTMLInputElement>(null);
 
   const handleOnDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const items = Array.from(todos);
+    const items = Array.from(storageData);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    setTodos(items);
+    setStorageData(items);
+    setLocalData(items);
   };
 
   const updateHandleClick = (id: string) => {
-    todoUtils.update(id, { array: todos, completedRef });
-    setTodos(todos);
+    todoUtils.update(id, { array: localData });
+    setStorageData(localData);
+    setLocalData(localData);
   };
 
   const removeTodo = (id: string) => {
-    todoUtils.remove(id, todos);
-    setTodos(todos);
-    window.location.reload();
+    setLocalData(todoUtils.remove(id, { array: localData }));
+    setStorageData(todoUtils.remove(id, { array: localData }));
+  };
+
+  const resetTodo = () => {
+    setStorageData(todoUtils.reset());
+    setLocalData(todoUtils.reset());
   };
 
   const activeHandleClick = (key: string) => {
     if (key === '2') {
-      const activeTodo = todos.filter((todo) => !todo.isCompleted);
-      setPreview(activeTodo);
+      const activeTodo = storageData.filter((todo) => !todo.isCompleted);
+      setLocalData(activeTodo);
       setActive(key);
     }
 
     if (key === '3') {
-      const completedTodo = todos.filter((todo) => todo.isCompleted);
-      setPreview(completedTodo);
+      const completedTodo = storageData.filter((todo) => todo.isCompleted);
+      setLocalData(completedTodo);
       setActive(key);
     }
 
     if (key === '1') {
-      setPreview(todos);
+      setLocalData(storageData);
       setActive(key);
     }
   };
 
   return (
     <>
-      <div className="grid rounded overflow-hidden divide-y divide-grayishBlue-200 dark:divide-grayishBlue-500 text-grayishBlue-700 dark:text-grayishBlue-50 shadow-2xl">
+      <div
+        className={clsx(
+          'grid rounded overflow-hidden divide-y divide-grayishBlue-200 text-grayishBlue-700 shadow-2xl',
+          'dark:divide-grayishBlue-500 dark:text-grayishBlue-50'
+        )}
+      >
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="todos">
+          <Droppable droppableId="storageData">
             {(droppableProvided) => (
               <ul
-                className="divide-y divide-grayishBlue-200 dark:divide-grayishBlue-500"
+                className={clsx(
+                  'divide-y divide-grayishBlue-200',
+                  'dark:divide-grayishBlue-500'
+                )}
                 {...droppableProvided.droppableProps}
                 ref={droppableProvided.innerRef}
               >
-                {preview.map(({ id, text, isCompleted }, index) => {
+                {localData.map(({ id, text, isCompleted }, index) => {
                   return (
                     <Draggable key={id} draggableId={id} index={index}>
                       {(draggableProvided) => (
@@ -80,19 +96,27 @@ export default function TodoField({ todoData, clearHandleClick }: Props) {
                           {...draggableProvided.draggableProps}
                           {...draggableProvided.dragHandleProps}
                           ref={draggableProvided.innerRef}
-                          className="flex items-center gap-x-2 px-4 bg-grayishBlue-50 dark:bg-grayishBlue-700"
+                          className={clsx(
+                            'flex items-center gap-x-2 px-4 bg-grayishBlue-50',
+                            'dark:bg-grayishBlue-700'
+                          )}
                         >
                           <input
                             type="checkbox"
-                            ref={completedRef}
                             defaultChecked={isCompleted}
-                            className="form-input h-5 w-5 p-3 rounded-full bg-grayishBlue-50 dark:bg-grayishBlue-700"
+                            className={clsx(
+                              'form-input h-5 w-5 p-3 rounded-full bg-grayishBlue-50',
+                              'dark:bg-grayishBlue-700'
+                            )}
                             onChange={() => updateHandleClick(id)}
                           />
                           <span className="w-full py-3.5 px-4">{text} </span>
                           <button
                             type="button"
-                            className="text-grayishBlue-700 dark:text-grayishBlue-50"
+                            className={clsx(
+                              'text-grayishBlue-700',
+                              'dark:text-grayishBlue-50'
+                            )}
                             onClick={() => removeTodo(id)}
                           >
                             <svg
@@ -117,9 +141,19 @@ export default function TodoField({ todoData, clearHandleClick }: Props) {
             )}
           </Droppable>
         </DragDropContext>
-        <div className="flex justify-between items-center py-2 px-4 bg-grayishBlue-50 dark:bg-grayishBlue-700 text-grayishBlue-400">
-          <div>{`${todoData.length} items left`}</div>
-          <div className="hidden md:flex justify-center items-center gap-x-2 py-2 px-4 font-bold">
+        <div
+          className={clsx(
+            'flex justify-between items-center py-2 px-4 bg-grayishBlue-50 text-grayishBlue-400',
+            'dark:bg-grayishBlue-700'
+          )}
+        >
+          <div>{`${storageData.length} items left`}</div>
+          <div
+            className={clsx(
+              'hidden justify-center items-center gap-x-2 py-2 px-4 font-bold',
+              'md:flex'
+            )}
+          >
             <button
               key="1"
               className={
@@ -151,12 +185,18 @@ export default function TodoField({ todoData, clearHandleClick }: Props) {
               Completed
             </button>
           </div>
-          <button type="button" onClick={clearHandleClick}>
+          <button type="button" onClick={resetTodo}>
             Clear Compleated
           </button>
         </div>
       </div>
-      <div className="flex md:hidden justify-center items-center gap-x-2 py-2 px-4 font-bold rounded bg-grayishBlue-50 dark:bg-grayishBlue-700 shadow-2xl">
+      <div
+        className={clsx(
+          'flex justify-center items-center gap-x-2 py-2 px-4 font-bold rounded bg-grayishBlue-50 shadow-2xl',
+          'md:hidden',
+          'dark:bg-grayishBlue-700'
+        )}
+      >
         <button
           key="1"
           className={

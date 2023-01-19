@@ -1,4 +1,4 @@
-import React, { ChangeEvent, MouseEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
 import Header from '@components/Header';
 import Content from '@components/Content';
 import Background from '@components/Background';
@@ -8,7 +8,7 @@ import Todo from 'todo';
 import todoUtils from '@components/utils/todoUtils';
 
 export default function App() {
-  const [data, setData] = useLocalStorage<Todo[]>('TODOS_KEY', todos);
+  const [todoData, setTodoData] = useLocalStorage<Todo[]>('TODOS_KEY', todos);
   const [theme, setTheme] = useLocalStorage<string>('THEME', 'light');
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
@@ -32,23 +32,16 @@ export default function App() {
   };
 
   const formHandleSubmit = () => {
-    const todo = todoUtils.create(isCompleted, text);
-    data.push(todo);
-    setData(data);
-  };
-
-  const clearHandleClick = () => {
-    setData(todoUtils.reset());
-    window.location.reload();
+    todoData.push(todoUtils.create(isCompleted, text));
+    setTodoData(todoData);
   };
 
   return (
     <>
       <Header preferedTheme={theme} switchHandleClick={switchHandleClick} />
       <Content
+        todoData={todoData}
         preferedTheme={theme}
-        clearHandleClick={clearHandleClick}
-        todoData={data}
         completedHandleClick={completedHandleClick}
         textHandleChange={textHandleChange}
         formHandleSubmit={formHandleSubmit}

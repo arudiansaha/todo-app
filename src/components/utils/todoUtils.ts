@@ -1,9 +1,7 @@
-import { RefObject } from 'react';
 import type Todo from 'todo';
 
 interface Options {
   array: Todo[];
-  completedRef: RefObject<HTMLInputElement>;
 }
 
 const todoUtils = {
@@ -25,18 +23,13 @@ const todoUtils = {
 
     if (filteredArray.isCompleted) {
       filteredArray.isCompleted = false;
-      window.location.reload();
     } else {
       filteredArray.isCompleted = true;
-      window.location.reload();
     }
   },
 
-  remove(id: string, array: Todo[]) {
-    array.splice(
-      array.findIndex((a) => a.id === id),
-      1
-    );
+  remove(id: string, options: Options) {
+    return options.array.filter((value) => value.id !== id);
   },
 };
 

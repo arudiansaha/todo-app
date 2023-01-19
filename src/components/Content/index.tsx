@@ -8,7 +8,6 @@ interface Props {
   completedHandleClick: (event: MouseEvent<HTMLInputElement>) => void;
   formHandleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   todoData: Todo[];
-  clearHandleClick: (event: MouseEvent<HTMLButtonElement>) => void;
   preferedTheme: string;
 }
 
@@ -17,7 +16,6 @@ export default function Content({
   completedHandleClick,
   formHandleSubmit,
   todoData,
-  clearHandleClick,
   preferedTheme,
 }: Props) {
   return (
@@ -29,7 +27,7 @@ export default function Content({
         onClick={completedHandleClick}
         onSubmit={formHandleSubmit}
       />
-      <TodoField todoData={todoData} clearHandleClick={clearHandleClick} />
+      <TodoField todoData={todoData} />
     </main>
   );
 }
