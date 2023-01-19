@@ -7,6 +7,7 @@ module.exports = {
       sans: ['Josefin Sans', 'sans-serif'],
     },
     colors: {
+      brightBlue: 'hsl(220, 98%, 61%)',
       darkBlue: 'hsl(235, 21%, 11%)',
       desaturedBlue: 'hsl(235, 24%, 19%)',
       lightGray: 'hsl(0, 0%, 98%)',

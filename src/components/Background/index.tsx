@@ -1,16 +1,16 @@
-import React, { LegacyRef } from 'react';
+import React from 'react';
 import lightDesktopBg from '@assets/images/bg-desktop-light.jpg';
 import lightMobileBg from '@assets/images/bg-mobile-light.jpg';
 import darkDesktopBg from '@assets/images/bg-desktop-dark.jpg';
 import darkMobileBg from '@assets/images/bg-mobile-dark.jpg';
 
 interface Props {
-  backgroundRef: LegacyRef<HTMLDivElement>;
+  preferedTheme: string;
 }
 
-export default function Background({ backgroundRef }: Props) {
+export default function Background({ preferedTheme }: Props) {
   return (
-    <div ref={backgroundRef} className="absolute inset-0 z-[-1] w-full">
+    <div className={`${preferedTheme} absolute inset-0 z-[-1] w-full`}>
       <picture className="dark:hidden h-[34%] w-full">
         <source media="(min-width: 768px)" srcSet={lightDesktopBg} />
         <img className="w-full object-cover" src={lightMobileBg} alt="" />

@@ -1,23 +1,26 @@
-import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useState } from 'react';
 import Header from '@components/Header';
 import Content from '@components/Content';
 import Background from '@components/Background';
-import themeSwitcher from '@components/utils/themeSwitcher';
 import todos from '@components/data/todos';
 import useLocalStorage from '@hooks/useLocalStorage';
 import Todo from 'todo';
 import todoUtils from '@components/utils/todoUtils';
 
 export default function App() {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useLocalStorage<Todo[]>('TODOS_KEY', todos);
+  const [theme, setTheme] = useLocalStorage<string>('THEME', 'light');
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
 
   const switchHandleClick = () => {
-    themeSwitcher('dark', { headerRef, contentRef, backgroundRef });
+    if (theme === 'light') {
+      setTheme('dark');
+    }
+
+    if (theme === 'dark') {
+      setTheme('light');
+    }
   };
 
   const textHandleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -41,16 +44,16 @@ export default function App() {
 
   return (
     <>
-      <Header headerRef={headerRef} switchHandleClick={switchHandleClick} />
+      <Header preferedTheme={theme} switchHandleClick={switchHandleClick} />
       <Content
+        preferedTheme={theme}
         clearHandleClick={clearHandleClick}
         todoData={data}
-        contentRef={contentRef}
         completedHandleClick={completedHandleClick}
         textHandleChange={textHandleChange}
         formHandleSubmit={formHandleSubmit}
       />
-      <Background backgroundRef={backgroundRef} />
+      <Background preferedTheme={theme} />
     </>
   );
 }
