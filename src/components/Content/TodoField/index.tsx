@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React, { MouseEvent, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -8,14 +8,22 @@ import {
 } from '@hello-pangea/dnd';
 import clsx from 'clsx';
 import useLocalStorage from '@hooks/useLocalStorage';
+import activeButton from '@components/utils/activeButton';
 import type Todo from 'todo';
-import todoUtils from '@components/utils/todoUtils';
 
 interface Props {
   todoData: Todo[];
+  updateHandleClick: (id: string) => void;
+  removeHandleClick: (id: string) => void;
+  resetHandleClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export default function TodoField({ todoData }: Props) {
+export default function TodoField({
+  todoData,
+  updateHandleClick,
+  removeHandleClick,
+  resetHandleClick,
+}: Props) {
   const [storageData, setStorageData] = useLocalStorage<Todo[]>(
     'TODOS_KEY',
     todoData
@@ -34,40 +42,12 @@ export default function TodoField({ todoData }: Props) {
     setLocalData(items);
   };
 
-  const updateHandleClick = (id: string) => {
-    todoUtils.update(id, { array: localData });
-    setStorageData(localData);
-    setLocalData(localData);
-  };
-
-  const removeTodo = (id: string) => {
-    setLocalData(todoUtils.remove(id, { array: localData }));
-    setStorageData(todoUtils.remove(id, { array: localData }));
-  };
-
-  const resetTodo = () => {
-    setStorageData(todoUtils.reset());
-    setLocalData(todoUtils.reset());
-  };
-
   const activeHandleClick = (key: string) => {
-    if (key === '2') {
-      const activeTodo = storageData.filter((todo) => !todo.isCompleted);
-      setLocalData(activeTodo);
-      setActive(key);
-    }
-
-    if (key === '3') {
-      const completedTodo = storageData.filter((todo) => todo.isCompleted);
-      setLocalData(completedTodo);
-      setActive(key);
-    }
-
-    if (key === '1') {
-      setLocalData(storageData);
-      setActive(key);
-    }
+    setLocalData(activeButton(key, storageData).array);
+    setActive(activeButton(key, storageData).key);
   };
+
+  const itemLeft = localData.filter((data) => !data.isCompleted).length;
 
   return (
     <>
@@ -110,14 +90,15 @@ export default function TodoField({ todoData }: Props) {
                             )}
                             onChange={() => updateHandleClick(id)}
                           />
-                          <span className="w-full py-3.5 px-4">{text} </span>
+                          {/* eslint-disable-next-line prettier/prettier */}
+                          <span className={`${isCompleted ? 'line-through text-grayishBlue-400' : ''} w-full py-3.5 px-4`}>{text}</span>
                           <button
                             type="button"
                             className={clsx(
                               'text-grayishBlue-700',
                               'dark:text-grayishBlue-50'
                             )}
-                            onClick={() => removeTodo(id)}
+                            onClick={() => removeHandleClick(id)}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -143,11 +124,11 @@ export default function TodoField({ todoData }: Props) {
         </DragDropContext>
         <div
           className={clsx(
-            'flex justify-between items-center py-2 px-4 bg-grayishBlue-50 text-grayishBlue-400',
+            'flex justify-between items-center gap-x-4 py-2 px-4 font-bold text-sm bg-grayishBlue-50 text-grayishBlue-400',
             'dark:bg-grayishBlue-700'
           )}
         >
-          <div>{`${storageData.length} items left`}</div>
+          <div>{`${itemLeft} items left`}</div>
           <div
             className={clsx(
               'hidden justify-center items-center gap-x-2 py-2 px-4 font-bold',
@@ -185,14 +166,14 @@ export default function TodoField({ todoData }: Props) {
               Completed
             </button>
           </div>
-          <button type="button" onClick={resetTodo}>
+          <button type="button" onClick={resetHandleClick}>
             Clear Compleated
           </button>
         </div>
       </div>
       <div
         className={clsx(
-          'flex justify-center items-center gap-x-2 py-2 px-4 font-bold rounded bg-grayishBlue-50 shadow-2xl',
+          'flex justify-center items-center gap-x-4 py-2 px-4 font-bold text-sm rounded bg-grayishBlue-50 shadow-2xl',
           'md:hidden',
           'dark:bg-grayishBlue-700'
         )}

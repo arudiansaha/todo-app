@@ -27,6 +27,9 @@
       "@components/*": [
         "components/*"
       ],
+      "@data/*": [
+        "data/*"
+      ],
       "@interfaces/*": [
         "interfaces/*"
       ],
